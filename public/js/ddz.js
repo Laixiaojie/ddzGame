@@ -225,8 +225,10 @@ my$('.out')[0].onclick = function () {
             l.forEach(function (item) {
                 item.parentNode.removeChild(item);
             })
+            my$('.myLastCards')[0].innerText = parseInt(my$('.myLastCards')[0].innerText) - l.length;
             return
         }
+        // 出牌不成功
         l.forEach(function (item) {
             item.className = 'card';
         })
@@ -249,7 +251,7 @@ function initF() {
     socket = io.connect('127.0.0.1:1235');
     var myCard; // 手上所有卡牌
     var other = 0;
-    
+
     // 玩家进入房间
     socket.on('addOne', function (otherPlayerObj) {
         outPlayerArray.push(new playerFn(JSON.plastCardsarse(otherPlayerObj), my$('.playerPlace')[other]))
@@ -275,6 +277,7 @@ function initF() {
 
     // 地主牌加手里
     socket.on('luck2', function (data) {
+        my$('.myLastCards')[0].innerText = 20;
         myCard = myCard.concat(JSON.parse(data));
         // myCard = myCard.sort(function (a, b) { return b.num - a.num });
         myCard = myCard.sort(function (a, b) { return b - a });
@@ -298,7 +301,7 @@ function initF() {
         my$('.ready')[0].style.display = 'none';// 自己准备标签隐藏
 
         // 地主高亮
-        outPlayerArray.forEach(function(item){
+        outPlayerArray.forEach(function (item) {
             item.endCard(data);
         })
     })
@@ -320,13 +323,14 @@ function initF() {
             myRemoveChild('card', '#table');
         } catch (error) { }
         sortCards(format(data.outC), '#table')
-        outPlayerArray.forEach(function(item){
+        outPlayerArray.forEach(function (item) {
             item.outCard(data);
         })
     });
     // 玩家离开，或者游戏重新开始
     socket.on('end', function (data) {
         socket.emit('qingLing')
+        my$('.myLastCards')[0].innerText = 17
 
         console.log('恭喜玩家%s赢得游戏，或者离开', data);
         myRemoveChild('card', '#me');
@@ -335,7 +339,7 @@ function initF() {
         [...my$('#table').getElementsByTagName('span')].forEach(function (item) {
             item.style.display = 'none';
         })
-        
+
         my$('.ready')[0].style.display = 'block';
         my$('.out')[0].style.display = 'none';
         my$('.pass')[0].style.display = 'none';
@@ -344,8 +348,8 @@ function initF() {
         outPlayerArray = [];
         other = 0;
 
-        [...my$('.playerPlace')].forEach(function(item){
-            [...item.children].forEach(function(innerI){
+        [...my$('.playerPlace')].forEach(function (item) {
+            [...item.children].forEach(function (innerI) {
                 innerI.innerText = '';
             })
         })

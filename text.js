@@ -74,3 +74,4 @@ function Dog() {
 }
 var dog = new Dog()
 dog.sayHi(17)
+dog.sayHi(20)
