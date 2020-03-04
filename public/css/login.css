@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  overflow: hidden;
+}
+body .navbar {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+body #bg {
+  z-index: -11;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: url('../imgs/hkd.png') no-repeat center;
+  transform-origin: center;
+  filter: brightness(50%) contrast(120%) blur(9px);
+  transform: scale(1.1);
+}
+body #loginMain {
+  padding-top: 5vh;
+  width: 35vw;
+  height: 40vh;
+  margin-top: 20vh;
+  background: rgba(75, 76, 71, 0.5);
+}
+body #loginMain .myform {
+  margin: auto;
+}
+body #loginMain .myform .form-group {
+  margin-top: 5vh;
+}
+body #loginMain .myform .form-group input {
+  width: 80%;
+}
+body #loginMain .myform .form-group label {
+  margin: auto;
+  color: black;
+}
+body #loginMain .myform .form-group button {
+  width: 40%;
+}

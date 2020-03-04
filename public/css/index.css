@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+}
+body {
+  height: 100vh;
+}
+header {
+  width: 100vw;
+  height: 5vh;
+  background: rgba(94, 92, 92, 0.089);
+}
+header .out {
+  width: 5vh;
+  height: 5vh;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+}
+header .out1 {
+  border-radius: 0 0 5vh 0;
+}
+header .out1 div {
+  width: 100%;
+  height: 100%;
+  border-radius: 5vh 0 0 0;
+  background: rgba(57, 112, 175, 0.5);
+}
+header .out2 {
+  right: 0;
+  border-radius: 0 0 0 5vh;
+}
+header .out2 div {
+  width: 100%;
+  height: 100%;
+  border-radius: 0 5vh 0 0;
+  background: rgba(57, 112, 175, 0.5);
+}
+header nav {
+  width: 100vw;
+  height: 5vh;
+  border-radius: 0 0 5vh 5vh;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+header nav div {
+  width: 5vh;
+  height: 5vh;
+  line-height: 7vh;
+  background: rgba(207, 127, 103, 0.8);
+}
+header nav div:first-child {
+  border-radius: 0 5vh 0 0;
+  line-height: 5vh;
+  padding-left: 5vh;
+}
+header nav div:first-child span {
+  font-weight: bolder;
+  border: 1px solid black;
+  padding: 3px;
+}
+header nav div:last-child {
+  border-radius: 5vh 0 0 0;
+}
+header nav div:last-child i {
+  position: relative;
+  right: 5vh;
+}
+#target {
+  width: 100%;
+  padding-bottom: 46%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 10px;
+}
+#target img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+#showPage {
+  position: absolute;
+  top: 5vh;
+  width: 100vw;
+  height: 25vh;
+  background: rgba(207, 127, 103, 0.8);
+}
+#showPage ul {
+  width: 100%;
+  height: 100%;
+  line-height: 8vh;
+}
+#showPage ul li {
+  width: 100%;
+  height: 33.33%;
+}
+#showPage ul li:hover {
+  background: rgba(57, 112, 175, 0.8);
+}
+#airWar {
+  width: 100vw;
+  height: 60vh;
+  position: relative;
+  top: 12%;
+  background: rgba(51, 101, 177, 0.4);
+}
+#airWar .airCraft {
+  width: 34px;
+  height: 24px;
+  background: url(../imgs/me.png) no-repeat bottom center;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}

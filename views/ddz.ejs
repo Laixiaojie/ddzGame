@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>thank</title>
+    <link rel="stylesheet" href="css/ddz.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="out">
+
+        <div id="player1" class="playerPlace">
+            玩家：
+            <p></p>
+            <span class="lastCards"></span>
+        </div>
+        <div id="player2" class="playerPlace">
+            玩家：
+            <p></p>
+            <span class="lastCards"></span>
+        </div>
+
+        <div id="table">
+            <section id="topCard">
+                <!-- 这里有地主牌 -->
+            </section>
+
+            <span class="p1s playerLogo">-准备-</span>
+            <span class="p2s playerLogo">-准备-</span>
+            <span class="mes">-准备-</span>
+        </div>
+
+        <div id="me">
+            <section>
+                <button class="ready">ready</button>
+                <button class="out">出 牌</button>
+                <button class="pass"> 过 </button>
+                <button class="grad">不抢</button>
+            </section>
+        </div>
+
+    </div>
+    <footer>
+        my name -- <span id="name"><%= name %></span>
+        剩余卡牌<span class="lastCards">17</span>
+    </footer>
+
+    <!-- <script src="js/socket.io.js"></script> -->
+    <script src="js/ddz.js"></script> 
+</body>
+
+</html>

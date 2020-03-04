@@ -1,0 +1,146 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#out {
+  width: 100vw;
+  height: 94vh;
+  display: flex;
+  justify-content: space-between;
+}
+#out #player1,
+#out #player2 {
+  display: inline-block;
+  position: relative;
+  border: 1px solid purple;
+  width: 10vw;
+  height: 70vh;
+}
+#out #player1 {
+  order: -1;
+}
+#out #player2 {
+  order: 1;
+}
+#out #me {
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  height: 200px;
+  border: 1px solid purple;
+}
+#out #me section {
+  position: absolute;
+  left: 0;
+  width: 10vw;
+  display: flex;
+  flex-direction: column;
+}
+#out #me section button {
+  position: relative;
+  margin: auto;
+  margin-top: 5px;
+  width: 6vw;
+  height: 4vh;
+  border: none;
+  border: 3px lightblue solid;
+  border-radius: 10px;
+  display: none;
+}
+#out #me section .ready {
+  display: block;
+}
+#out #me .card {
+  display: inline-block;
+  height: 90%;
+  width: 7%;
+  background: #504069;
+  position: absolute;
+  border: 3px rgba(42, 166, 182, 0.883) double;
+  border-radius: 10px;
+  font-weight: 900;
+  font-size: larger;
+  color: white;
+  padding-left: 0.3em;
+}
+#out #me .card:hover {
+  color: rosybrown;
+  transition: all 0.25s;
+}
+#out #me .sele {
+  background: #664069;
+  transform: translateY(-30px);
+  transition: all 0.5s;
+}
+#out #table {
+  position: relative;
+  display: inline-block;
+  width: 75vw;
+  height: 70vh;
+  border: 3px darkcyan solid;
+  order: 0;
+  margin-top: 5vh;
+}
+#out #table section {
+  width: 30vw;
+  height: 12vh;
+  border: 2px goldenrod solid;
+  position: relative;
+  left: 50%;
+  top: 2%;
+  transform: translateX(-50%);
+  text-align: center;
+  line-height: 12vh;
+}
+#out #table div {
+  display: inline-block;
+  height: 90%;
+  width: 7%;
+  background: #504069;
+  position: absolute;
+  border: 3px rgba(42, 166, 182, 0.883) double;
+  border-radius: 10px;
+  font-weight: 900;
+  font-size: larger;
+  color: white;
+  padding-left: 0.3em;
+  height: 15vh;
+  top: 40%;
+  width: 7vw;
+}
+#out #table div:hover {
+  color: rosybrown;
+  transition: all 0.25s;
+}
+#out #table span {
+  display: none;
+  width: 8vw;
+  height: 5vh;
+  border: darkcyan 1px double;
+  border-radius: 2vh;
+  text-align: center;
+  line-height: 5vh;
+  font-weight: 900;
+  font-size: 1.4em;
+  color: #aa9431;
+}
+#out #table .p1s {
+  position: absolute;
+  top: 47%;
+}
+#out #table .p2s {
+  position: absolute;
+  top: 47%;
+  right: 0;
+}
+#out #table .mes {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 2vh;
+}
+#footer {
+  width: 100vw;
+  height: 6vh;
+}
