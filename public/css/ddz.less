@@ -13,13 +13,14 @@
     height: 94vh;
     display: flex;
     justify-content: space-between;
+    transform-origin: center;
     #player1,
     #player2 {
         display: inline-block;
         position: relative;
         border: 1px solid purple;
-        width: 10vw;
-        height: 70vh;
+        width: 11%;
+        height: 75%;
         // margin-top: 4vh;
     }
 
@@ -33,21 +34,22 @@
     #me {
         position: absolute;
         bottom: 0;
-        width: 100vw;
-        height: 24vh;
+        width: 100%;
+        height: 24%;
         border: 1px solid purple;
         section{
             position: absolute;
             left: 0;
-            width: 10vw;
+            width: 10%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             button{
                 position: relative;
                 margin: auto;
                 margin-top: 5px;
-                width: 6vw;
-                height: 4vh;
+                width: 77%;
+                height: 18%;
                 border: none;
                 border: 3px lightblue solid;
                 border-radius: 10px;
@@ -89,14 +91,14 @@
     #table{
         position: relative;
         display: inline-block;
-        width: 75vw;
-        height: 70vh;
+        width: 73%;
+        height: 73%;
         border: 3px darkcyan solid;
         order: 0;
-        margin-top: 5vh;
+        margin-top: 1%;
         section{
-            width: 30vw;
-            height: 12vh;
+            width: 33%;
+            height: 16%;
             border: 2px goldenrod solid;
             position: relative;
             left: 50%;
@@ -113,7 +115,7 @@
         }
         span{
             display: none;
-            width: 8vw;
+            width: 16%;
             height: 5vh;
             border: darkcyan 1px double;
             border-radius: 2vh;
@@ -146,4 +148,22 @@
 #footer{
     width: 100vw;
     height: 6vh;
+}
+@media all and (max-width: 768px ) {
+    @media  (orientation: portrait) {
+        #out{
+            width: 100vh;
+            height: 95vw;
+            transform: rotate(90deg);
+            position: absolute;
+        }
+        footer{
+            width: 100vh;
+            height: 5vw;
+            transform: rotate(90deg);
+            position: absolute;
+            transform-origin: left top;
+            left: 7vw;
+        }
+    }
 }
