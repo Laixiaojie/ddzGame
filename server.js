@@ -35,8 +35,8 @@ app.post('/user', bodyParser.json(), function (req, res) {
 	var name = req.body.user
 	if (obj[name] == req.body.paw.toString()) {
 
-		res.sendfile('/views/happy.html', app.get('sf'))
-		// res.render('ddz', { name: name })	
+		// res.sendfile('/views/happy.html', app.get('sf'))
+		res.render('ddz', { name: name })	
 		return
 	}
 	// res.sendfile('/views/login.html', app.get('sf'))
