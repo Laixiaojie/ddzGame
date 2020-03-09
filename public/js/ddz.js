@@ -84,21 +84,25 @@ function sortCards(cardList, ele) {
         card = document.createElement('div');
         card.innerText = cardList[i];// 闭包问题？？
         card.className = 'card';
+
         card.style.left = (i + 7) * 3 + '%';
+
         ele.appendChild(card);// 卡片添加到元素中。
+        // myCard.push(card)
 
         // 卡片添加到数组中。
-        myCardList.push(card);
+        // myCardList.push(card);
 
         // 添加点击事件。
         card.addEventListener('click', function () {
-            var nameList = this.className.split(' ');
+            /* var nameList = this.className.split(' ');
             if (nameList.length != 1) {
                 this.className = 'card';
                 // this.style.left = (myCardList.indexOf(this) + 5) * 4 + '%';
             } else {
                 this.className += ' sele';
-            }
+            } */
+            this.classList.toggle('sele')
         });
     }
 }
@@ -187,7 +191,7 @@ my$('.grad')[0].addEventListener('click', function () {
     socket.emit('luck', false, function (data) { });
     my$('.mes')[0].removeEventListener('click', agree);
     my$('.mes')[0].innerText = '准备';
-    // my$('.mes')[0].style.display = 'none';
+    my$('.mes')[0].style.background = 'white';
     this.style.display = 'none';
 })
 // 出牌事件
@@ -224,8 +228,15 @@ my$('.out')[0].onclick = function () {
         if (flag) {
             l.forEach(function (item) {
                 item.parentNode.removeChild(item);
+                eleCard.splice(eleCard.indexOf(item), 1)
             })
+            
+            eleCard.forEach(function(item, i){
+                item.style.left = (i + 7) * 3 + '%';
+            })
+            // 剩余卡牌
             my$('.myLastCards')[0].innerText = parseInt(my$('.myLastCards')[0].innerText) - l.length;
+
             return
         }
         // 出牌不成功
@@ -249,12 +260,13 @@ my$('.pass')[0].onclick = function () {
 function initF() {
     // 47.97.157.6:80
     socket = io.connect('127.0.0.1:1235');
-    var myCard; // 手上所有卡牌
+    myCard = []; // 手上所有卡牌
+    eleCard = []; // 元素数组
     var other = 0;
 
     // 玩家进入房间
     socket.on('addOne', function (otherPlayerObj) {
-        outPlayerArray.push(new playerFn(JSON.plastCardsarse(otherPlayerObj), my$('.playerPlace')[other]))
+        outPlayerArray.push(new playerFn(JSON.parse(otherPlayerObj), my$('.playerPlace')[other]))
         // my$('.playerPlace')[other].children[1].innerText = otherPlayerName;
         my$('.playerLogo')[other++].style.display = 'block';
     })
@@ -262,8 +274,7 @@ function initF() {
     // 准备完毕，卡牌排序
     socket.on('ready', function (data) {
         myCard = JSON.parse(data);
-        // console.log(myCard);
-        sortCards(format(myCard), '#me');
+        sortCards(format(JSON.parse(data)), '#me');
         my$('.ready')[0].style.display = 'none';
     });
 
@@ -291,7 +302,7 @@ function initF() {
 
     // 展示地主卡牌，进入游戏正是阶段
     socket.on('endCard', function (data) {
-        console.log(data);
+        eleCard = [...my$('.card')];
         var luckCards = format(JSON.parse(data).luckCard);
         my$("#topCard").innerText = luckCards[0] + '--' + luckCards[1] + '--' + luckCards[2];
 
