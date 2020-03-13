@@ -8,6 +8,8 @@ var app = express();
 var http = require("http").createServer(app);
 var fs = require('fs');
 const bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+
 var port = 1235;// 端口号
 
 
@@ -15,13 +17,33 @@ var port = 1235;// 端口号
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.use(cookieParser('admin'));
 app.set('view engine', 'ejs');
 app.set('sf', { root: __dirname })// sendFile
 
 app.get('/', function (req, res) {
 
-	var mypath = req.path
-	// console.log(`有人访问--`,mypath);
+
+
+
+
+	/* if (!req.cookies) {
+		res.cookie('user', 'Jk_lai', { expires: new Date(Date.now() + 100)});
+
+	}
+	console.log(req.cookies); */
+	/* if(req.signedCookies.rememberme){
+		console.log(req.cookies);
+	} else{
+		res.cookie('rememberme', 1, { expires: new Date(Date.now() + 900000),maxAge: 90000});
+	}
+
+
+	console.log(res.cookie);
+ */
+
+
+
 	res.sendFile('/views/login.html', app.get('sf'), function (err) {
 		if (err) {
 			console.log(err);
@@ -31,12 +53,23 @@ app.get('/', function (req, res) {
 })
 app.post('/user', bodyParser.json(), function (req, res) {
 
+
+
+
+
+
+
+
+
+
+
+
 	var obj = JSON.parse(fs.readFileSync('./usersTable/users.json', encoding = 'utf-8'));
 	var name = req.body.user
 	if (obj[name] == req.body.paw.toString()) {
 
 		// res.sendfile('/views/happy.html', app.get('sf'))
-		res.render('ddz', { name: name })	
+		res.render('ddz', { name: name })
 		return
 	}
 	// res.sendfile('/views/login.html', app.get('sf'))

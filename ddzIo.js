@@ -80,14 +80,15 @@ function init(http) {
             }
         })
 
-        socket.on('luck', function (data) {
+        socket.on('luck', function (data, fn) {
             if (data) {// 如果玩家同意当选
 
                 if (socket.id == connections[classId].people[connections[classId].luckNumber]) {// 验证玩家是否为真
                     console.log(`\n+ + ${name}玩家,同意当选地主 + +\n`);
                     connections[classId].Rejections = 0;
                     laveCards += 3;
-                    socket.emit('luck2', JSON.stringify(connections[classId].luckCard));// 发出添加地主拍指令
+                    fn(JSON.stringify(connections[classId].luckCard)) // 尝试
+                    //socket.emit('luck2', JSON.stringify(connections[classId].luckCard));// 发出添加地主拍指令
                     io.to(classId).emit('endCard', JSON.stringify({ luckCard: connections[classId].luckCard, id: socket.id }));// endCard--向所有玩家展示地主牌
                     return;
                 }
@@ -96,6 +97,7 @@ function init(http) {
 
             } else { // 如果玩家不同意当选地主
                 connections[classId].Rejections++; // 拒绝当选地主次数加1
+                fn('no')
 
                 if (connections[classId].Rejections == 3) { // 如果全部玩家拒绝当选地主
                     connections[classId].Rejections = 0;// 计数归零

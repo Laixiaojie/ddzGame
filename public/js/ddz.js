@@ -9,21 +9,9 @@ function my$(str) {
         return document.getElementsByTagName(str);
     }
 }
-var xmlhttp = new XMLHttpRequest();
-var socket;
-var flag = true;// 是否准备
-var myName = my$('#name').innerText
-var outPlayerArray = [];
 
-xmlhttp.onreadystatechange = function () {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var cardJson = JSON.parse(xmlhttp.responseText);
-        sortCards(cardJson, '#me');
-        // console.log(xmlhttp.responseText);
-        // xmlhttp.open("GET", "/?ready=true", true);
-        // xmlhttp.send();
-    }
-}
+var myName = my$('#name').innerText
+
 
 function playerFn(obj, place) {
 
@@ -34,28 +22,18 @@ function playerFn(obj, place) {
 
     this.place.children[0].innerText = this.name;
     this.place.children[1].innerText = this.lastCards;
-    /* socket.on('outCard', function (data) {
-        if (data.name == this.name) {
-            lastCards -= data.data.length;
-            place.children[2].innerText = lastCards;
-        }
-    }) */
+
     this.outCard = function (data) {
         if (data.name == this.name) {
             this.lastCards -= data.outC.length;
             this.place.children[1].innerText = this.lastCards;
         }
     }
-    /* socket.on('endCard', function (data) {
-        if (JSON.parse(data).id == id) {
-            this.lastCards += 3;
-            place.children[2].innerText = lastCards;
-        }
-    }) */
+
     this.endCard = function (data) {
         if (JSON.parse(data).id == this.id) {
             this.place.children[0].innerText = `${this.name},玩家是大地主`
-            this.lastCards += 3;
+            this.lastCards = 20; // 地主有20张牌
             this.place.children[1].innerText = this.lastCards;
         }
     }
@@ -167,32 +145,40 @@ function format(first) {
 }
 // 准备事件
 my$('.ready')[0].onclick = function () {
-    if (flag) {
+    if (game.flag) {
         my$('.mes')[0].style.display = 'block';
-        socket.emit('ready', { roomId: '1212', flag: flag, name: myName });
-        flag = false;
+        game.socket.emit('ready', { roomId: '1212', flag: game.flag, name: myName });
+        game.flag = false;
     } else {
         my$('.mes')[0].style.display = 'none';
-        socket.emit('ready', { roomId: '1212', flag: flag, name: myName });
-        flag = true;
+        game.socket.emit('ready', { roomId: '1212', flag: game.flag, name: myName });
+        game.flag = true;
     }
 }
 // 同意成为地主事件
 my$('.mes')[0].addEventListener('click', agree)
 function agree() {
-    socket.emit('luck', true, function (data) { });
-    // this.style.display = 'none';
-    my$('.grad')[0].style.display = 'none';
-    my$('.out')[0].style.display = 'block'; // 出牌按钮显示
+    game.socket.emit('luck', true, function (data) {
+        // 插入地主牌
+        my$('.myLastCards')[0].innerText = 20;
+        game.myCard = game.myCard.concat(JSON.parse(data)).sort(function (a, b) { return b - a });
+        myRemoveChild('card', '#me');// 删除手里的牌，加上地主牌从新排序
+        sortCards(format(game.myCard), '#me');
+
+        my$('.grad')[0].style.display = 'none'; // 
+        my$('.out')[0].style.display = 'block'; // 出牌按钮显示
+    });
 }
 
 // 拒绝成为地主事件
 my$('.grad')[0].addEventListener('click', function () {
-    socket.emit('luck', false, function (data) { });
-    my$('.mes')[0].removeEventListener('click', agree);
-    my$('.mes')[0].innerText = '准备';
-    my$('.mes')[0].style.background = 'white';
-    this.style.display = 'none';
+    game.socket.emit('luck', false, function (data) {
+
+        my$('.mes')[0].removeEventListener('click', agree);
+        my$('.mes')[0].innerText = '准备';
+        my$('.mes')[0].style.background = 'white';
+        my$('.grad')[0].style.display = 'none';
+    });
 })
 // 出牌事件
 my$('.out')[0].onclick = function () {
@@ -224,14 +210,14 @@ my$('.out')[0].onclick = function () {
                 break;
         }
     });
-    socket.emit('outCard', JSON.stringify({ str: str, flag: true }), function (flag) {
+    game.socket.emit('outCard', JSON.stringify({ str: str, flag: true }), function (flag) {
         if (flag) {
             l.forEach(function (item) {
                 item.parentNode.removeChild(item);
-                eleCard.splice(eleCard.indexOf(item), 1)
+                game.eleCard.splice(game.eleCard.indexOf(item), 1)
             })
-            
-            eleCard.forEach(function(item, i){
+
+            game.eleCard.forEach(function (item, i) {
                 item.style.left = (i + 7) * 3 + '%';
             })
             // 剩余卡牌
@@ -250,74 +236,92 @@ my$('.out')[0].onclick = function () {
 }
 // 要不起事件
 my$('.pass')[0].onclick = function () {
-    socket.emit('outCard', JSON.stringify({ flag: false }));
+    game.socket.emit('outCard', JSON.stringify({ flag: false }));
     my$('.out')[0].style.display = 'none';
     my$('.pass')[0].style.display = 'none';
 }
 
 
 
+class Game {
+    constructor() {
+        this.myCard = []
+        this.eleCard = []; // 元素数组
+        this.outPlayerArray = [];// 其他玩家列表
+        this.other = 0;
+        this.flag = true;// 是否准备
+    }
+    reset(){
+        this.myCard = []
+        this.eleCard = []
+        this.outPlayerArray = []
+        this.other = 0
+        this.flag = true
+    }
+}
+Game.prototype.socket = null;
+
+var game = new Game(); // 每局游戏参数setting
+
 function initF() {
     // 47.97.157.6:80
-    socket = io.connect('127.0.0.1:1235');
-    myCard = []; // 手上所有卡牌
+    // var socket = io.connect('127.0.0.1:1235');
+    /* var myCard = []; // 手上所有卡牌
     eleCard = []; // 元素数组
-    var other = 0;
+    var other = 0; */
+
+    game.socket = io.connect('127.0.0.1:1235');
 
     // 玩家进入房间
-    socket.on('addOne', function (otherPlayerObj) {
-        outPlayerArray.push(new playerFn(JSON.parse(otherPlayerObj), my$('.playerPlace')[other]))
+    game.socket.on('addOne', function (otherPlayerObj) {
+        game.outPlayerArray.push(new playerFn(JSON.parse(otherPlayerObj), my$('.playerPlace')[game.other]))
         // my$('.playerPlace')[other].children[1].innerText = otherPlayerName;
-        my$('.playerLogo')[other++].style.display = 'block';
+        my$('.playerLogo')[game.other++].style.display = 'block';
     })
 
     // 准备完毕，卡牌排序
-    socket.on('ready', function (data) {
-        myCard = JSON.parse(data);
-        sortCards(format(JSON.parse(data)), '#me');
+    game.socket.on('ready', function (data) {
+        game.myCard = JSON.parse(data);
+        sortCards(format(game.myCard), '#me');
         my$('.ready')[0].style.display = 'none';
     });
 
     // 被选为幸运儿
-    socket.on('luck', function (data) {
-        console.log(data);
+    game.socket.on('luck', function (data) {
+        console.log(`${data} U`);
         my$('.mes')[0].style.cssText = 'display:block;background:red;';// 抢
         my$('.mes')[0].innerText = '抢地主';
         my$('.grad')[0].style.display = 'block';// 不抢
     });
 
     // 地主牌加手里
-    socket.on('luck2', function (data) {
+    /* socket.on('luck2', function (data) {
         my$('.myLastCards')[0].innerText = 20;
-        myCard = myCard.concat(JSON.parse(data));
-        // myCard = myCard.sort(function (a, b) { return b.num - a.num });
-        myCard = myCard.sort(function (a, b) { return b - a });
-        // 删除手里的牌，加上地主牌从新排序
-        myRemoveChild('card', '#me');
-        /* Array.prototype.slice.call(my$('.card')).forEach(function (item) {
-            item.parentNode.removeChild(item);
-        }) */
-        sortCards(format(myCard), '#me');
-    });
+        game.myCard = game.myCard.concat(JSON.parse(data)).sort(function (a, b) { return b - a });
+        
+        myRemoveChild('card', '#me');// 删除手里的牌，加上地主牌从新排序
 
+        sortCards(format(game.myCard), '#me');
+    });
+ */
     // 展示地主卡牌，进入游戏正是阶段
-    socket.on('endCard', function (data) {
-        eleCard = [...my$('.card')];
+    game.socket.on('endCard', function (data) {
+        game.eleCard = [...my$('.card')];
         var luckCards = format(JSON.parse(data).luckCard);
         my$("#topCard").innerText = luckCards[0] + '--' + luckCards[1] + '--' + luckCards[2];
 
         [...my$('#table').getElementsByTagName('span')].forEach(function (item) {
-            item.style.cssText = 'display:none;background:white;';// 牌桌上所有准备清空
+            item.style.cssText = 'display:none;background:white;';// 牌桌上所有准备标签清空
         })
-        my$('.ready')[0].style.display = 'none';// 自己准备标签隐藏
+        my$('.ready')[0].style.display = 'none';// ready标签隐藏
 
-        // 地主高亮
-        outPlayerArray.forEach(function (item) {
+        // 地主现身
+        game.outPlayerArray.forEach(function (item) {
             item.endCard(data);
         })
     })
     // 轮到出牌
-    socket.on('isMe', function (data) {
+    game.socket.on('isMe', function (data) {
         if (data) {
             my$('.out')[0].style.display = 'block';
             my$('.pass')[0].style.display = 'block';
@@ -327,26 +331,28 @@ function initF() {
     })
 
     // 别人出的牌
-    socket.on('outCard', function (data) {
+    game.socket.on('outCard', function (data) {
         data = JSON.parse(data)
         console.log('收到玩家出牌');
         try {
             myRemoveChild('card', '#table');
         } catch (error) { }
         sortCards(format(data.outC), '#table')
-        outPlayerArray.forEach(function (item) {
+        game.outPlayerArray.forEach(function (item) {
             item.outCard(data);
         })
     });
     // 玩家离开，或者游戏重新开始
-    socket.on('end', function (data) {
-        socket.emit('qingLing')
+    game.socket.on('end', function (data) {
+        game.socket.emit('qingLing')
         my$('.myLastCards')[0].innerText = 17
 
         console.log('恭喜玩家%s赢得游戏，或者离开', data);
+
         myRemoveChild('card', '#me');
         myRemoveChild('card', '#table');
         my$('#topCard').innerText = '';
+
         [...my$('#table').getElementsByTagName('span')].forEach(function (item) {
             item.style.display = 'none';
         })
@@ -355,15 +361,14 @@ function initF() {
         my$('.out')[0].style.display = 'none';
         my$('.pass')[0].style.display = 'none';
 
-        flag = true;
-        outPlayerArray = [];
-        other = 0;
+        game.reset();
 
         [...my$('.playerPlace')].forEach(function (item) {
             [...item.children].forEach(function (innerI) {
                 innerI.innerText = '';
             })
         })
+
     })
 
 }
